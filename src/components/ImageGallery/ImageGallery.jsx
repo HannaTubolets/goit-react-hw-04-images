@@ -1,9 +1,33 @@
-// user_id: 18681081;
-// URL-рядок HTTP-запиту
-// https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
+import PropTypes from 'prop-types';
+import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
+import css from './ImageGallery.module.css';
 
-{
-  /* <ul class="gallery">
-  <!-- Набір <li> із зображеннями -->
-</ul> */
-}
+export const ImageGallery = ({ images, onClick }) => {
+  return (
+    <ul className={css.gallery}>
+      {images.map(({ id, largeImageURL, tags, webformatURL }) => {
+        return (
+          <ImageGalleryItem
+            key={id}
+            largeImage={largeImageURL}
+            tags={tags}
+            preview={webformatURL}
+            onClick={onClick}
+          />
+        );
+      })}
+    </ul>
+  );
+};
+
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      tags: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onClick: PropTypes.func,
+};

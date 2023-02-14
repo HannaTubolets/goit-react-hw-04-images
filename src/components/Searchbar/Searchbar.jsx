@@ -1,19 +1,28 @@
-// Компонент приймає один проп onSubmit –
-// функцію для передачі значення інпута
-// під час сабміту форми.Створює DOM - елемент наступної структури.
+import PropTypes from 'prop-types';
+import css from './Searchbar.module.css';
 
-<header class="searchbar">
-  <form class="form">
-    <button type="submit" class="button">
-      <span class="button-label">Search</span>
-    </button>
+export const Searchbar = ({ onSubmit }) => {
+  return (
+    <>
+      <header className={css.searchbar}>
+        <form className={css.searchForm} onSubmit={onSubmit}>
+          <button type="submit" className={css.searchFormBtn}>
+            <span className={css.searchFormBtnLabel}>Search</span>
+          </button>
 
-    <input
-      class="input"
-      type="text"
-      autocomplete="off"
-      autofocus
-      placeholder="Search images and photos"
-    />
-  </form>
-</header>;
+          <input
+            className={css.searchFormInput}
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+          />
+        </form>
+      </header>
+      ;
+    </>
+  );
+};
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func,
+};
