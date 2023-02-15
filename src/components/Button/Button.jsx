@@ -1,4 +1,14 @@
-// При натисканні на кнопку Load more повинна довантажуватись наступна порція зображень
-//  і рендеритися разом із попередніми.Кнопка повинна рендеритися лише тоді,
-// коли є якісь завантажені зображення.Якщо масив зображень порожній, кнопка не рендериться.
-//
+import propTypes from 'prop-types';
+import css from './Button.module.css';
+
+export const Button = ({ onClick }) => {
+  return (
+    <button type="button" className={css.Button} onClick={onClick}>
+      Load more
+    </button>
+  );
+};
+
+Button.propTypes = {
+  onClick: propTypes.func.isRequired,
+};

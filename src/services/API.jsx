@@ -1,28 +1,43 @@
 import axios from 'axios';
 
-// API key: 18681081-442890f4222be4a8d6361e754
-// URL-рядок HTTP-запиту
 // https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12
+// ' https://pixabay.com/api/?q=cat&page=1&key=32846684-9759f804fcaf49bb92c6f21b5&image_type=photo&orientation=horizontal&per_page=12';
 
-axios.defaults.baseURL = `https://pixabay.com/api`;
+const BASE_URL = 'https://pixabay.com/api/';
+const API_KEY = '32846684-9759f804fcaf49bb92c6f21b5';
+export const PER_PAGE = 12;
 
-export const fetchImages = async (inputValue, pageNr) => {
-  const response = await axios.get(
-    `/?q=${inputValue}&page=${pageNr}&key=18681081-442890f4222be4a8d6361e754&image_type=photo&orientation=horizontal&per_page=12`
-  );
-  return response.data.hits.map(image => {
-    return {
-      id: image.id,
-      webformatURL: image.webformatURL,
-      largeImageURL: image.largeImageURL,
-      tags: image.tags,
-    };
-  });
+axios.defaults.baseURL = BASE_URL;
+axios.defaults.params = {
+  image_type: 'photo',
+  orientation: 'horisontal',
+  per_page: PER_PAGE,
 };
-// console.log(fetchImages('cat', 1));
 
-// axios
-//   .get(
-//     'https://pixabay.com/api/?q=cat&page=1&key=18681081-442890f4222be4a8d6361e754&image_type=photo&orientation=horizontal&per_page=12'
-//   )
-//   .then(response => console.log(data));
+export const requestImages = async (inputValue, pageNr) => {
+  const { data } = await axios.get(
+    `/?q=${inputValue}&page=${pageNr}&key=${API_KEY}`
+  );
+
+  const images = data.hits.map(({ id, webformatURL, tags, largeImageUR }) => ({
+    id,
+    webformatURL,
+    tags,
+    largeImageUR,
+  }));
+  const totalImages = data.totalImages;
+  return { totalImages, images };
+};
+
+// export const requestImages = async (inputValue, pageNr) => {
+//   try {
+//     const { data } = await axios.get(
+//       `/?q=${inputValue}&page=${pageNr}&key=${API_KEY}`
+//     );
+//     console.log(data);
+//   } catch (error) {
+//   } finally {
+//   }
+// };
+
+// requestImages('cat', 1);
