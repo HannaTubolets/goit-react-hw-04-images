@@ -1,18 +1,17 @@
 import { Component } from 'react';
+import { Loader } from './Loader/Loader';
 import { requestImages } from 'services/API';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
 import { Searchbar } from './Searchbar/Searchbar';
 import { Button } from './Button/Button';
-import { Loader } from './Loader/Loader';
-
 import css from './App.module.css';
 
 export class App extends Component {
   state = {
     query: '',
     images: [],
-    isLoading: true,
+    isLoading: false,
     error: '',
     page: 1,
     showModal: false,
@@ -103,7 +102,6 @@ export class App extends Component {
     } = this.state;
     return (
       <div className={css.App}>
-        {isLoading && <Loader />}
         <Searchbar onSubmit={this.handleSearchSubmit} />
         {images.length > 0 && !error && (
           <>
@@ -116,6 +114,7 @@ export class App extends Component {
           </Modal>
         )}
         {showLoadMore && <Button onClick={this.handleLoadMoreImg} />}
+        {isLoading && <Loader />}
       </div>
     );
   }

@@ -1,16 +1,15 @@
-import { ColorRing } from 'react-loader-spinner';
+import { RotatingSquare } from 'react-loader-spinner';
 import css from './Loader.module.css';
 
 export const Loader = () => {
   <div className={css.Loader}>
-    <ColorRing
+    <RotatingSquare
+      height="100"
+      width="100"
+      color="#0375f8"
+      ariaLabel="rotating-square-loading"
+      strokeWidth="4"
       visible={true}
-      height="80"
-      width="80"
-      ariaLabel="blocks-loading"
-      wrapperClass="blocks-wrapper"
-      colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
     />
-    ;
   </div>;
 };
