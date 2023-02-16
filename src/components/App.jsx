@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { requestImages, PER_PAGE } from 'services/API';
+import { requestImages } from 'services/API';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Modal } from './Modal/Modal';
 import { Searchbar } from './Searchbar/Searchbar';
@@ -12,81 +12,71 @@ export class App extends Component {
   state = {
     query: '',
     images: [],
-    isLoading: false,
+    isLoading: true,
     error: '',
     page: 1,
     showModal: false,
     largeImage: '',
-    currentImgPerPage: null,
+    showLoadMore: false,
   };
 
-  componentDidUpdate(_, prevState) {
-    const prevQuery = prevState.query;
-    const nextQuery = this.state.query;
-    if (prevQuery !== nextQuery) {
-      this.fetchImages();
+  async componentDidUpdate(_, prevState) {
+    const { page, query } = this.state;
+
+    if (
+      prevState.query !== this.state.query ||
+      prevState.page !== this.state.page
+    ) {
+      this.setState({ isLoading: true });
+
+      try {
+        const { hits, totalHits } = await requestImages(query, page);
+        if (totalHits === 0) {
+          alert('Images not found');
+          this.setState({ isLoading: false, showLoadMore: false });
+          return;
+        }
+
+        const images = hits.map(
+          ({ id, largeImageURL, tags, webformatURL }) => ({
+            id,
+            largeImageURL,
+            tags,
+            webformatURL,
+          })
+        );
+
+        console.log(hits.length);
+        console.log(totalHits);
+        console.log(page);
+        console.log(Math.ceil(totalHits / 12));
+
+        this.setState(prevState => {
+          return {
+            images: [...prevState.images, ...images],
+            showLoadMore: page < Math.ceil(totalHits / 12),
+          };
+        });
+      } catch (error) {
+        console.err(error);
+        this.setState({ error: error.message });
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   }
 
-  fetchImages = async () => {
-    const { page, query } = this.state;
-
-    try {
-      this.setState({ isLoading: true });
-      const { hits, totalHits } = await requestImages(page, query);
-      if (totalHits === 0) {
-        alert('Images not found ...');
-        this.setState({ loading: false, currentImgPerPage: null });
-        return;
-      }
-      const images = this.imagesArray(hits);
-      this.setState(prevState => {
-        return {
-          images: [...prevState.images, ...images],
-          currentImgPerPage: hits.length,
-          page: prevState.page + 1,
-        };
-      });
-    } catch (error) {
-      console.log(error);
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ isLoading: false });
-    }
-    // const data = await requestImages(query, page);
-    // const hits = data.hits;
-    // const total = data.total;
-
-    // if (total === 0) {
-    //   alert('No images found');
-    //   return;
-    // }
-    // if (total > 0 && page === 1) {
-    //   alert(`${total}images found`);
-    // }
-    // if (page > 1 && page * 12 < total) {
-    //   alert('Here are 12 more images');
-    // }
-    // if (total - page * 12 < total <= 0) {
-    //   alert('There are no more images');
-    // }
-    // this.setState({ images: hits, total });
-  };
-
-  imagesArray = data => {
-    return data.map(({ id, largeImageURL, tags, webformatURL }) => {
-      return { id, largeImageURL, tags, webformatURL };
-    });
+  handleLoadMoreImg = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   handleSearchSubmit = query => {
-    this.setState(() => {
-      return { query: query, page: 1, images: [] };
+    this.setState({
+      images: [],
+      page: 1,
+      query: query,
+      showLoadMore: false,
     });
-  };
-
-  handleLoadMoreImg = () => {
-    this.fetchImages();
   };
 
   openModal = largeImage => {
@@ -104,22 +94,20 @@ export class App extends Component {
   render() {
     const {
       images,
-      loading,
+      isLoading,
       error,
       largeImage,
       tags,
-      currentImgPerPage,
+      showLoadMore,
       showModal,
     } = this.state;
     return (
       <div className={css.App}>
+        {isLoading && <Loader />}
         <Searchbar onSubmit={this.handleSearchSubmit} />
         {images.length > 0 && !error && (
           <>
             <ImageGallery images={images} onClick={this.openModal} />
-            {currentImgPerPage && currentImgPerPage < PER_PAGE && (
-              <p className={css.Message}>There are no more pictures</p>
-            )}
           </>
         )}
         {showModal && (
@@ -127,10 +115,7 @@ export class App extends Component {
             <img src={largeImage} alt={tags} />
           </Modal>
         )}
-        {currentImgPerPage === PER_PAGE && !loading && (
-          <Button onClick={this.handleLoadMoreImg} />
-        )}
-        {loading && <Loader />}
+        {showLoadMore && <Button onClick={this.handleLoadMoreImg} />}
       </div>
     );
   }

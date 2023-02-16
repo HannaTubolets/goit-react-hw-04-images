@@ -10,7 +10,7 @@ export class Searchbar extends Component {
   };
 
   handleSubmit = event => {
-    event.preventDefaul();
+    event.preventDefault();
     const { query } = this.state;
     const { onSubmit } = this.props;
 

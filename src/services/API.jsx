@@ -18,4 +18,4 @@ export const requestImages = async (inputValue, pageNr) => {
   return data;
   // console.log(data);
 };
-// requestImages('cat', 1);
+// requestImages('dog', 5);

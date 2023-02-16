@@ -5,7 +5,7 @@ import css from './ImageGallery.module.css';
 export const ImageGallery = ({ images, onClick }) => {
   return (
     <div>
-      <ul className={css.gallery}>
+      <ul className={css.ImageGallery}>
         {images.map(({ id, largeImageURL, tags, webformatURL }) => {
           return (
             <ImageGalleryItem
