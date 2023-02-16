@@ -1,21 +1,23 @@
 import { Component } from 'react';
 import { requestImages, PER_PAGE } from 'services/API';
 import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Modal } from './Modal/Modal';
 import { Searchbar } from './Searchbar/Searchbar';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
-import { Modal } from './Modal/Modal';
+
 import css from './App.module.css';
 
 export class App extends Component {
   state = {
     query: '',
     images: [],
-    totalImages: 0,
     isLoading: false,
     error: '',
     page: 1,
-    showLoadMore: false,
+    showModal: false,
+    largeImage: '',
+    currentImgPerPage: null,
   };
 
   componentDidUpdate(_, prevState) {
@@ -24,27 +26,19 @@ export class App extends Component {
     if (prevQuery !== nextQuery) {
       this.fetchImages();
     }
-    if (this.setState.page > 2) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
   }
 
   fetchImages = async () => {
+    const { page, query } = this.state;
+
     try {
       this.setState({ isLoading: true });
-      const { hits, totalHits } = await requestImages(
-        this.state.page,
-        this.state.query
-      );
+      const { hits, totalHits } = await requestImages(page, query);
       if (totalHits === 0) {
         alert('Images not found ...');
         this.setState({ loading: false, currentImgPerPage: null });
         return;
       }
-
       const images = this.imagesArray(hits);
       this.setState(prevState => {
         return {
@@ -54,10 +48,29 @@ export class App extends Component {
         };
       });
     } catch (error) {
+      console.log(error);
       this.setState({ error: error.message });
     } finally {
       this.setState({ isLoading: false });
     }
+    // const data = await requestImages(query, page);
+    // const hits = data.hits;
+    // const total = data.total;
+
+    // if (total === 0) {
+    //   alert('No images found');
+    //   return;
+    // }
+    // if (total > 0 && page === 1) {
+    //   alert(`${total}images found`);
+    // }
+    // if (page > 1 && page * 12 < total) {
+    //   alert('Here are 12 more images');
+    // }
+    // if (total - page * 12 < total <= 0) {
+    //   alert('There are no more images');
+    // }
+    // this.setState({ images: hits, total });
   };
 
   imagesArray = data => {
@@ -72,7 +85,7 @@ export class App extends Component {
     });
   };
 
-  handleLoadMorImg = () => {
+  handleLoadMoreImg = () => {
     this.fetchImages();
   };
 
@@ -89,8 +102,15 @@ export class App extends Component {
   };
 
   render() {
-    const { images, loading, currentImgPerPage, error, showModal, largeImage } =
-      this.state;
+    const {
+      images,
+      loading,
+      error,
+      largeImage,
+      tags,
+      currentImgPerPage,
+      showModal,
+    } = this.state;
     return (
       <div className={css.App}>
         <Searchbar onSubmit={this.handleSearchSubmit} />
@@ -98,13 +118,13 @@ export class App extends Component {
           <>
             <ImageGallery images={images} onClick={this.openModal} />
             {currentImgPerPage && currentImgPerPage < PER_PAGE && (
-              <p className={css.Message}>No more pictures</p>
+              <p className={css.Message}>There are no more pictures</p>
             )}
           </>
         )}
         {showModal && (
           <Modal onClose={this.toggleModal}>
-            <img src={largeImage} alt="" />
+            <img src={largeImage} alt={tags} />
           </Modal>
         )}
         {currentImgPerPage === PER_PAGE && !loading && (
