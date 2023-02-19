@@ -1,4 +1,4 @@
-# Image Search Application
+# Image Search Application (Used React Hooks)
 
 Individual project for searching images by keyword. [HTML/CSS, SASS/CSS,
 JavaScript, Webpack, VSCode, Figma, Git/GitHub, Node.js]
