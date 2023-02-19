@@ -8,17 +8,6 @@ import { Button } from './Button/Button';
 import css from './App.module.css';
 
 export const App = () => {
-  // state = {
-  //   query: '',
-  //   images: [],
-  //   isLoading: false,
-  //   error: '',
-  //   page: 1,
-  //   showModal: false,
-  //   largeImage: '',
-  //   showLoadMore: false,
-  // };
-
   const [query, setQuery] = useState('');
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +25,6 @@ export const App = () => {
       try {
         setIsLoading(true);
         const { hits, totalHits } = await requestImages(query, page);
-        // if (totalHits === 0) {
-        //   alert('Images not found');
-        //   this.setState({ isLoading: false, showLoadMore: false });
-        //   return;
         const images = hits.map(
           ({ id, largeImageURL, tags, webformatURL }) => ({
             id,
@@ -66,52 +51,8 @@ export const App = () => {
     fetchImages();
   }, [query, page]);
 
-  // const { page, query } = this.state;
-  // if (
-  //   prevState.query !== this.state.query ||
-  //   prevState.page !== this.state.page
-  // ) {
-  //   this.setState({ isLoading: true });
-
-  //   try {
-  //     const { hits, totalHits } = await requestImages(query, page);
-  //     if (totalHits === 0) {
-  //       alert('Images not found');
-  //       this.setState({ isLoading: false, showLoadMore: false });
-  //       return;
-  //     }
-
-  //     const images = hits.map(
-  //       ({ id, largeImageURL, tags, webformatURL }) => ({
-  //         id,
-  //         largeImageURL,
-  //         tags,
-  //         webformatURL,
-  //       })
-  //     );
-
-  //     console.log(hits.length);
-  //     console.log(totalHits);
-  //     console.log(page);
-  //     console.log(Math.ceil(totalHits / 12));
-
-  //     this.setState(prevState => {
-  //       return {
-  //         images: [...prevState.images, ...images],
-  //         showLoadMore: page < Math.ceil(totalHits / 12),
-  //       };
-  //     });
-  //   } catch (error) {
-  //     console.err(error);
-  //     this.setState({ error: error.message });
-  //   } finally {
-  //     this.setState({ isLoading: false });
-  //   }
-  // }
-
   const handleLoadMoreImg = () => {
     setPage(prevPage => prevPage + 1);
-    // this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   const handleSearchSubmit = query => {
@@ -119,39 +60,17 @@ export const App = () => {
     setPage(1);
     setImages([]);
     setIsLoading(false);
-    // this.setState({
-    //   images: [],
-    //   page: 1,
-    //   query: query,
-    //   showLoadMore: false,
-    // });
   };
 
   const openModal = largeImage => {
     setLargeImage(largeImage);
     toggleModal();
-
-    // this.setState({ largeImage }, () => {
-    //   this.toggleModal();
-    // });
   };
 
   const toggleModal = () => {
     setShowModal(showModal => !showModal);
-    // this.setState(({ showModal }) => ({
-    //   showModal: !showModal,
-    // }));
   };
 
-  // const {
-  //   images,
-  //   isLoading,
-  //   error,
-  //   largeImage,
-  //   tags,
-  //   showLoadMore,
-  //   showModal,
-  // } = this.state;
   return (
     <div className={css.App}>
       <Searchbar onSubmit={handleSearchSubmit} />
