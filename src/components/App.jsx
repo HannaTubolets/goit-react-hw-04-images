@@ -19,12 +19,14 @@ export const App = () => {
 
   useEffect(() => {
     if (!query) return;
-    alert('Images not found');
 
     const fetchImages = async () => {
       try {
         setIsLoading(true);
         const { hits, totalHits } = await requestImages(query, page);
+        if (totalHits === 0) {
+          alert('Images not found');
+        }
         const images = hits.map(
           ({ id, largeImageURL, tags, webformatURL }) => ({
             id,
