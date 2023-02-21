@@ -4,18 +4,20 @@ import css from './Modal.module.css';
 
 export const Modal = ({ onClose, children }) => {
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  });
-
-  const handleKeyDown = e => {
+    
+    const handleKeyDown = e => {
     if (e.code === 'Escape') {
       onClose();
     }
   };
 
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  },[onClose]);
+
+  
   const handleOverlayClick = event => {
     if (event.currentTarget === event.target) {
       onClose();
