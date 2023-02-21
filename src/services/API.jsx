@@ -16,4 +16,7 @@ export const requestImages = async (inputValue, pageNr) => {
     `/?q=${inputValue}&page=${pageNr}&key=${API_KEY}`
   );
   return data;
+  // console.log(data);
 };
+// requestImages('dog', 5);
+// console.log(requestImages('dog', 5));
